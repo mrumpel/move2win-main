@@ -188,6 +188,7 @@
     <Content Include="Views\Home\Index.cshtml" />
     <Content Include="Views\Home\FinishedRace.cshtml" />
     <Content Include="Views\Shared\FirebaseScripts.cshtml" />
+    <Content Include="Views\Home\Bets.cshtml" />
   </ItemGroup>
   <ItemGroup>
     <Folder Include="App_Data\" />

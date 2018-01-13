@@ -25,5 +25,10 @@ namespace LolaRennt.Controllers
 
             return View();
         }
+
+        public ActionResult Bets(string roomKey)
+        {
+            return View();
+        }
     }
 }
