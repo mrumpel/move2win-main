@@ -6,4 +6,6 @@
 
 var fbMainRoom = "testrooms1";
 
+var fbMainUser = "teatusers1"
+
 firebase.initializeApp(fbConfig);

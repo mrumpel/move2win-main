@@ -2,36 +2,45 @@
 @model List<Room>
 <h2>Ставки</h2>
 
-<div id="divBets">
+@Html.Partial("FirebaseScripts")
+
+<script type="text/javascript">
+
+    $(document).ready(function () {
+
+        var rootRef = firebase.database().ref();
+        var roomRef = rootRef.child(fbMainRoom).orderByChild("Status").equalTo(1);
+        
+        roomRef.once("value", function (snapshot) {
+            snapshot.forEach(function (child) {
+                var room = child.val();
+                var roomKey = child.key;
+                var roomName = room.Name;
+                var roomDriver1 = room.Driver1.Name;
+                var roomDriver2 = room.Driver2.Name;
+                $('#tableRooms')
+                    .append('<tr><td><a href="@Url.Action("Room", "Home")?roomKey='
+                    + roomKey + '">' + roomName +'</a></td><td>'
+                    + roomDriver1 + '</td><td>'
+                    + roomDriver2 + '</td></tr>');
+            });
+        });
+
+    });
+
+</script>
+
+<div id="divRooms">
     <div class="row">
-        <div class="col-md-8">
+        <div class="col">
             <div class="row">
-                <table class="table table-striped" style="margin-top:10px">
-                    @if (Model != null && Model.Any()) {
-                        foreach (var room in Model)
-                        {
-                        <tr>
-                            <td>
-                                <div class="row">
-                                    <div class="col-md-4">
-                                        @room.Name
-                                    </div>
-                                    <div class="col-md-4">
-                                        @room.Driver1.Name
-                                    </div>
-                                    <div class="col-md-4">
-                                        @room.Driver2.Name
-                                    </div>
-                                </div>
-                            </td>
-                        </tr>
-                        }
-                    }
+                <table class="table table-striped" style="margin-top:10px" id="tableRooms">
+                    <tr>
+                        <th>Комната</th>
+                        <th>Первый водитель</th>
+                        <th>Второй водитель</th>
+                    </tr>
                 </table>
-            </div>
-        </div>
-        <div class="col-md-4" id="map">
-            <div class="row">
             </div>
         </div>
     </div>
