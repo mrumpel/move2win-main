@@ -4,4 +4,6 @@
     databaseURL: "https://tstapp-eedbc.firebaseio.com"
 };
 
+var fbMainRoom = "testrooms1";
+
 firebase.initializeApp(fbConfig);
