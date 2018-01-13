@@ -216,6 +216,7 @@
     <Content Include="Views\Shared\FirebaseScripts.cshtml" />
     <Content Include="Views\Home\Room.cshtml" />
     <Content Include="Views\Home\RoomList.cshtml" />
+    <Content Include="Views\Home\User.cshtml" />
   </ItemGroup>
   <ItemGroup>
     <Folder Include="App_Data\" />
