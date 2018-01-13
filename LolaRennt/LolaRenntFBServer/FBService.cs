@@ -3,6 +3,7 @@ using Firebase.Database.Query;
 using LolaRenntServer;
 using System;
 using System.Collections.Generic;
+using System.Linq;
 using System.Threading.Tasks;
 
 namespace LolaRenntFBServer
@@ -16,6 +17,8 @@ namespace LolaRenntFBServer
         private string rootRoom = "testrooms1";
 
         private string rootUser = "testusers1";
+
+        #region Rooms
 
         public List<Room> LoadRoomsByStatus(Status status)
         {
@@ -41,6 +44,34 @@ namespace LolaRenntFBServer
 
             return result;
         }
+
+        public Room LoadRoomById(string roomId)
+        {
+            return LoadRoomByIdAsync(roomId).Result;
+        }
+
+        public async Task<Room> LoadRoomByIdAsync(string roomId)
+        {
+            var firebase = new FirebaseClient(fbPath, new FirebaseOptions() { AuthTokenAsyncFactory = () => Task.FromResult(token) });
+
+            var rooms = await firebase
+                .Child(rootRoom)
+                .OrderByKey()
+                .EqualTo(roomId)
+                .OnceAsync<Room>();
+
+            foreach (var room in rooms)
+            {
+                if (room != null)
+                    return room.Object;
+            }
+
+            return null;
+        }
+
+        #endregion
+
+        #region Users
 
         public User LoadUserById(string userId)
         {
@@ -94,5 +125,51 @@ namespace LolaRenntFBServer
             }
 
         }
+
+        #endregion
+
+        #region Bet
+
+        public bool SaveBet(string roomId, BetItem bet)
+        {
+            return SaveBetAsync(roomId, bet).Result;
+        }
+
+        public async Task<bool> SaveBetAsync(string roomId, BetItem bet)
+        {
+            var room = LoadRoomById(roomId);
+            var user = LoadUserById(bet.UserId);
+
+            if (room == null || user == null || room.Status != Status.Full)
+                return false;
+
+            if (bet.Amount < user.Points)
+            {
+                var bets = room.Bets.ToList();
+                bets.Add(bet);
+                room.Bets = bets.ToArray();
+
+                user.Points = user.Points - (bet.Amount ?? 0);
+
+                var firebase = new FirebaseClient(fbPath, new FirebaseOptions() { AuthTokenAsyncFactory = () => Task.FromResult(token) });
+
+                await firebase
+                    .Child(rootUser)
+                    .Child(user.Name)
+                    .PutAsync(user);
+
+                await firebase
+                    .Child(rootRoom)
+                    .Child(room.Name)
+                    .PutAsync(room);
+
+                return true;
+            }
+
+            
+            return false;
+        }
+
+        #endregion
     }
 }
