@@ -11,6 +11,7 @@
                 <div id="Photo1"><img src="https://avt-7.foto.mail.ru/mail/govoradlo1953/_avatar180?"/></div>
                 <div id="Rate1" style="padding-top: 10px;"></div>
                 <div id="SetRate1"><input type="button" value="Поставить 100 поинтов" onClick="SetBet100(0);"></div>
+                <div id="Bets1" style="overflow:scroll;overflow-x: hidden;margin: 10px auto;white-space: nowrap; height:200px; padding-top: 10px;"></div>
             </div>
         </td>
         <td>
@@ -24,6 +25,7 @@
                 <div id="Photo2"><img src="https://avt-7.foto.mail.ru/mail/govoradlo1953/_avatar180?" /></div>
                 <div id="Rate2" style="padding-top: 10px;"></div>
                 <div id="SetRate2"><input type="button" value="Поставить 100 поинтов" onClick="SetBet100(1);"></div>
+                <div id="Bets2" style="overflow:scroll;overflow-x: hidden;margin: 10px auto;white-space: nowrap; height:200px; padding-top: 10px;"></div>
             </div>
         </td>
     </tr>
@@ -43,6 +45,27 @@
     {
         $('#SetRate1').hide();
         $('#SetRate2').hide();
+    }
+
+    function OutputBets(bets)
+    {
+        if (bets)
+        {
+            var driverBets1 = {};
+            var driverBets2 = {};
+
+            $('#Bets1').html("")
+            $('#Bets2').html("")
+
+            bets.forEach(function (item, i, arr) {
+                if (item.Driver == 0) {
+                    $('#Bets1').prepend("<div style='font-size:xx-small;'>" + item.UserId + ": " + item.Amount + "</div>");
+                }
+                if (item.Driver == 1) {
+                    $('#Bets2').prepend("<div style='font-size:xx-small;'>" + item.UserId + ": " + item.Amount + "</div>");
+                }
+            });
+        }
     }
 
     function SetBet100(driver)
@@ -117,8 +140,11 @@
         });
 
         var roomRef = firebase.database().ref(fbMainRoom + "/@Model");
-        roomRef.once("value", function (snapshot) {
+        roomRef.on("value", function (snapshot) {
             var room = snapshot.val();
+
+            OutputBets(room.Bets);
+
             if (room.Status != 1) {
                 HideRate();
                 if (started == 0){
@@ -126,12 +152,6 @@
                     alert("Заезда начался. Ставки больше не принимаются.");
                 }
             }
-        });
-
-        var betsRef = firebase.database().ref(fbMainRoom + "/@Model/Bets");
-        betsRef.once('child_added', function (snapshot) {
-            var bets = snapshot.val();
-            debugger;
         });
     });
 
@@ -199,6 +219,8 @@
             $('#DriverName2').html(room.Driver1.Name);
 
             var bets = room.Bets;
+
+            OutputBets(room.Bets);
 
             if (bets) {
                 bets.forEach(function (item, i, arr) {
