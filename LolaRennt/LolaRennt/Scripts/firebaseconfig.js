@@ -5,6 +5,7 @@
 };
 
 var fbMainRoom = "testrooms1";
+//var fbMainRoom = "android";
 var fbMainUser = "testusers1";
 
 firebase.initializeApp(fbConfig);
