@@ -188,7 +188,7 @@
     <Content Include="Views\Home\Index.cshtml" />
     <Content Include="Views\Home\FinishedRace.cshtml" />
     <Content Include="Views\Shared\FirebaseScripts.cshtml" />
-    <Content Include="Views\Home\Bets.cshtml" />
+    <Content Include="Views\Home\Room.cshtml" />
   </ItemGroup>
   <ItemGroup>
     <Folder Include="App_Data\" />
@@ -208,6 +208,10 @@
     <Content Include="Scripts\jquery-1.10.2.min.map" />
   </ItemGroup>
   <ItemGroup>
+    <ProjectReference Include="..\LolaRenntFBServer\LolaRenntFBServer.csproj">
+      <Project>{69165c96-8f12-4d98-a4be-7355c3b382d4}</Project>
+      <Name>LolaRenntFBServer</Name>
+    </ProjectReference>
     <ProjectReference Include="..\LolaRenntServer\LolaRenntModels.csproj">
       <Project>{e14835de-be85-44ce-9bff-ebd5d5d1417e}</Project>
       <Name>LolaRenntModels</Name>

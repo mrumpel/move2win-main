@@ -1,4 +1,6 @@
-﻿using System.Web.Mvc;
+﻿using LolaRenntServer;
+using System.Collections.Generic;
+using System.Web.Mvc;
 
 namespace LolaRennt.Controllers
 {
@@ -26,7 +28,12 @@ namespace LolaRennt.Controllers
             return View();
         }
 
-        public ActionResult Bets(string roomKey)
+        public ActionResult Room(string roomKey)
+        {
+            return View();
+        }
+
+        public ActionResult Bet(string roomKey)
         {
             return View();
         }
