@@ -9,22 +9,20 @@
                 <div><b>Гонщик 1</b></div>
                 <div><h5 id="DriverName1"></h5></div>
                 <div id="Photo1"><img src="https://avt-7.foto.mail.ru/mail/govoradlo1953/_avatar180?"/></div>
-                <div id="Rate1" style="padding-top: 10px;"></div>
-                <div id="SetRate1"><input type="button" value="Поставить 100 поинтов" onClick="SetBet100(0);"></div>
+                <div id="SetRate1"><input type="button" value="Поставить 100 поинтов" class="btn" onClick="SetBet100(0);"></div>
                 <div id="Bets1" style="overflow:scroll;overflow-x: hidden;margin: 10px auto;white-space: nowrap; height:200px; padding-top: 10px;"></div>
             </div>
         </td>
         <td>
             <div id="ActiveRaceMap" style="width: 640px; height: 480px;"></div>
-            <div id="divPoints" style="font-size:large; text-align:center;">Поинтов на счету:</div>
+            <h3 id="Rate1" style="font-size:large; text-align:center;"></h3>
         </td>
         <td style="width:50%; vertical-align:top;">
             <div style="text-align:center;">
                 <div><b>Гонщик 2</b></div>
                 <div><h5 id="DriverName2"></h5></div>
                 <div id="Photo2"><img src="https://avt-7.foto.mail.ru/mail/govoradlo1953/_avatar180?" /></div>
-                <div id="Rate2" style="padding-top: 10px;"></div>
-                <div id="SetRate2"><input type="button" value="Поставить 100 поинтов" onClick="SetBet100(1);"></div>
+                <div id="SetRate2"><input type="button" value="Поставить 100 поинтов" class="btn" onClick="SetBet100(1);"></div>
                 <div id="Bets2" style="overflow:scroll;overflow-x: hidden;margin: 10px auto;white-space: nowrap; height:200px; padding-top: 10px;"></div>
             </div>
         </td>
@@ -121,8 +119,7 @@
         userRef.once("value", function (snapshot) {
             var user = snapshot.val();
             points = user.Points;
-
-            $('#divPoints').html('Поинтов на счету: ' + points);
+            
         });
     }
 
@@ -200,10 +197,8 @@
             }
         }
 
-        $('#Rate1').html('Рейтинг: ' + v1.toFixed(2) + ' к ' + v2.toFixed(2));
-        $('#Rate2').html('Рейтинг: ' + v2.toFixed(2) + ' к ' + v1.toFixed(2));
-
-        $('#divPoints').html('Поинтов на счету: ' + points);
+        $('#Rate1').html(v1.toFixed(2) + ' : ' + v2.toFixed(2));
+        
     }
 
     function initMap() {
