@@ -36,6 +36,12 @@
                             <td>
                                 <div id="pName"></div>
                             </td>
+                            <td style="padding-left:20px;">
+                                <img src="https://www.coinwarz.com/content/images/Bitcoin.png"/>
+                            </td>
+                            <td>
+                                <div id="pPoints" style="color: white;padding-right:20px;"></div>
+                            </td>
                             <td>
                                 <input type="submit" value="Донат" onClick="AddPoints();">
                             </td>
@@ -126,7 +132,7 @@
             
             userRef.once("value", function (snapshot) {
                 var user = snapshot.val();
-                $('#pName').append('<p style="display: inline; color: white"> (' + user.Points + ')</p>');
+                $('#pPoints').html('Поинты: ' + user.Points);
             });
             $('#pName').html('<a href="@Url.Action("User", "Home")?id=' + getCookie('LolaRenntKey') + '" id="Name">'
                 + getCookie('LolaRenntName') + '</a>');
@@ -164,7 +170,7 @@
             userRef.on('value', function (snapshot) {
                 userRef.once("value", function (snapshot) {
                     var user = snapshot.val();
-                    $('#pName').children('p').text(' ('+user.Points+')');
+                    $('#pPoints').html('Поинты: '+user.Points);
                 });
             });
         });
