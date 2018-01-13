@@ -62,6 +62,22 @@
             firebase.database().ref(fbMainUser).update(updates)
         });
 
+        var roomRef = firebase.database().ref(fbMainRoom + "/@Model");
+        roomRef.once("value", function (snapshot) {
+
+            var room = snapshot.val();
+            if (!room.Bets) {
+                room.Bets = [];
+            }
+            var bet = { UserId: getCookie('LolaRenntKey'), Amount: 100, Driver: driver };
+            room.Bets.push(bet);
+
+            var updates = {};
+            updates[snapshot.key] = room;
+
+            firebase.database().ref(fbMainRoom).update(updates)
+        });
+
         if (points < 100) {
             $('#SetRate1').hide();
             $('#SetRate2').hide();
@@ -165,7 +181,7 @@
             }
 
             GetRate();
-            
+
             var start = room.Start;
             var finish = room.Finish;
 
