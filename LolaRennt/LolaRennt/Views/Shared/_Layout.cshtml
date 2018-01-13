@@ -37,6 +37,9 @@
                                 <p id="pName"></p>
                             </td>
                             <td>
+                                <input type="submit" value="Донат" onClick="AddPoints();">
+                            </td>
+                            <td>
                                 <input type="submit" value="Войти" onClick="AuthRandomUser();">
                             </td>
                         </tr>
@@ -57,6 +60,24 @@
     </div>
 
     <script type="text/javascript">
+
+        function AddPoints()
+        {
+            if (getCookie('LolaRenntKey') != "") {
+
+                var userRef = firebase.database().ref(fbMainUser + "/" + getCookie('LolaRenntKey'));
+                userRef.once("value", function (snapshot) {
+                    
+                    var user = snapshot.val();
+                    user.Points = user.Points + 100;
+
+                    var updates = {};
+                    updates[snapshot.key] = user;
+
+                    firebase.database().ref(fbMainUser).update(updates)
+                });
+            }
+        }
 
         function getRandomInt(min, max) {
             return Math.floor(Math.random() * (max - min)) + min;
@@ -84,10 +105,12 @@
                 snapshot.forEach(function (child) {
                     if (i == lnght) {
                         var user = child.val();
-                        setCookie("LolaRenntKey", child.Key);
+                        setCookie("LolaRenntKey", child.key);
                         setCookie("LolaRenntName", user.Name);
 
                         setName();
+                        window.location.reload(false); 
+
                     }
                     i = i + 1;
                 });

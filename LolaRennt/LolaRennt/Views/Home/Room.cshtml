@@ -9,16 +9,21 @@
                 <div><b>Гонщик 1</b></div>
                 <div><h5 id="DriverName1"></h5></div>
                 <div id="Photo1"><img src="https://avt-7.foto.mail.ru/mail/govoradlo1953/_avatar180?"/></div>
+                <div id="Rate1" style="padding-top: 10px;"></div>
+                <div id="SetRate1"><input type="button" value="Поставить 100 поинтов" onClick="SetBet100(0);"></div>
             </div>
         </td>
         <td>
             <div id="ActiveRaceMap" style="width: 640px; height: 480px;"></div>
+            <div id="divPoints" style="font-size:large; text-align:center;">Поинтов на счету:</div>
         </td>
         <td style="width:50%; vertical-align:top;">
             <div style="text-align:center;">
                 <div><b>Гонщик 2</b></div>
                 <div><h5 id="DriverName2"></h5></div>
                 <div id="Photo2"><img src="https://avt-7.foto.mail.ru/mail/govoradlo1953/_avatar180?" /></div>
+                <div id="Rate2" style="padding-top: 10px;"></div>
+                <div id="SetRate2"><input type="button" value="Поставить 100 поинтов" onClick="SetBet100(1);"></div>
             </div>
         </td>
     </tr>
@@ -27,6 +32,57 @@
 
 
 <script>
+
+    var points;
+    var bet1 = 0;
+    var bet2 = 0;
+
+    function SetBet100(driver)
+    {
+        points = points - 100;
+        if (driver == 0)
+        {
+            bet1 = bet1 + 100;
+        }
+        if (driver == 1) {
+            bet2 = bet2 + 100;
+        }
+
+        GetRate();
+
+        var userRef = firebase.database().ref(fbMainUser + "/" + getCookie('LolaRenntKey'));
+        userRef.once("value", function (snapshot) {
+
+            var user = snapshot.val();
+            user.Points = user.Points - 100;
+
+            var updates = {};
+            updates[snapshot.key] = user;
+
+            firebase.database().ref(fbMainUser).update(updates)
+        });
+
+        if (points < 100) {
+            $('#SetRate1').hide();
+            $('#SetRate2').hide();
+        }
+    }
+
+    function LoadUserData()
+    {
+        var userRef = firebase.database().ref(fbMainUser + "/" + getCookie('LolaRenntKey'));
+
+        userRef.once("value", function (snapshot) {
+            var user = snapshot.val();
+            points = user.Points;
+
+            $('#divPoints').html('Поинтов на счету: ' + points);
+        });
+    }
+
+    $(document).ready(function () {
+        LoadUserData();
+    });
 
     function FindMinMax(item, min, max) {
         if (min.X == 0 || item.X < min.X) {
@@ -43,6 +99,42 @@
         }
     }
 
+    function GetRate()
+    {
+        var v1;
+        var v2;
+
+        if (bet1 == bet2) {
+            v1 = 1;
+            v2 = 1;
+        }
+        else {
+            if (bet1 <= bet2) {
+                v1 = 1;
+                if (bet1 == 0) {
+                    v2 = bet2 / 1;
+                }
+                else {
+                    v2 = bet2 / bet1;
+                }
+            }
+            else {
+                v2 = 1;
+                if (bet2 == 0) {
+                    v1 = bet1 / 1;
+                }
+                else {
+                    v1 = bet1 / bet2;
+                }
+            }
+        }
+
+        $('#Rate1').html('Рейтинг: ' + v1.toFixed(2) + ' к ' + v2.toFixed(2));
+        $('#Rate2').html('Рейтинг: ' + v2.toFixed(2) + ' к ' + v1.toFixed(2));
+
+        $('#divPoints').html('Поинтов на счету: ' + points);
+    }
+
     function initMap() {
 
         var roomRef = firebase.database().ref(fbMainRoom + "/@Model");
@@ -55,6 +147,25 @@
             $('#DriverName1').html(room.Driver1.Name);
             $('#DriverName2').html(room.Driver1.Name);
 
+            var bets = room.Bets;
+
+            if (bets) {
+                bets.forEach(function (item, i, arr) {
+                    if (item.Driver == 0) {
+                        if (item.Amount) {
+                            bet1 = bet1 + item.Amount;
+                        }
+                    }
+                    if (item.Driver == 1) {
+                        if (item.Amount) {
+                            bet2 = bet2 + item.Amount;
+                        }
+                    }
+                });
+            }
+
+            GetRate();
+            
             var start = room.Start;
             var finish = room.Finish;
 
@@ -90,7 +201,7 @@
 
             google.maps.event.trigger(map, 'resize');
         });
-      
+
     }
 </script>
 
