@@ -35,8 +35,21 @@
     var bet1 = 0;
     var bet2 = 0;
 
+    var started = 0;
+
+    function HideRate()
+    {
+        $('#SetRate1').hide();
+        $('#SetRate2').hide();
+    }
+
     function SetBet100(driver)
     {
+        if (points < 100) {
+            alert('Недостаточно поинтов. Пополните свой счет.')
+            return;
+        }
+
         points = points - 100;
         if (driver == 0)
         {
@@ -75,17 +88,11 @@
 
             firebase.database().ref(fbMainRoom).update(updates)
         });
-
-        if (points < 100) {
-            $('#SetRate1').hide();
-            $('#SetRate2').hide();
-        }
     }
 
     function LoadUserData()
     {
         var userRef = firebase.database().ref(fbMainUser + "/" + getCookie('LolaRenntKey'));
-
         userRef.once("value", function (snapshot) {
             var user = snapshot.val();
             points = user.Points;
@@ -95,6 +102,34 @@
 
     $(document).ready(function () {
         LoadUserData();
+
+        var userRef = firebase.database().ref(fbMainUser + "/" + getCookie('LolaRenntKey'));
+        userRef.on('value', function (snapshot) {
+            var user = snapshot.val();
+            points = user.Points;
+
+            if ($('#divPoints')) {
+                $('#divPoints').html('Поинтов на счету: ' + points);
+            }
+        });
+
+        var roomRef = firebase.database().ref(fbMainRoom + "/@Model");
+        roomRef.once("value", function (snapshot) {
+            var room = snapshot.val();
+            if (room.Status != 1) {
+                HideRate();
+                if (started == 0){
+                    started = 1;
+                    alert("Заезда начался. Ставки больше не принимаются.");
+                }
+            }
+        });
+
+        var betsRef = firebase.database().ref(fbMainRoom + "/@Model/Bets");
+        betsRef.once('child_added', function (snapshot) {
+            var bets = snapshot.val();
+            debugger;
+        });
     });
 
     function FindMinMax(item, min, max) {
