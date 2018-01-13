@@ -1,7 +1,7 @@
 ﻿using Firebase.Database;
 using Firebase.Database.Query;
 using LolaRenntServer;
-
+using System;
 using System.Collections.Generic;
 using System.Threading.Tasks;
 
@@ -13,19 +13,21 @@ namespace LolaRenntFBServer
 
         private string token = "vrwQwApj78sb2MpxTAVd44aMdmhUTnoIY0LR4FwG";
 
-        private string root = "testrooms1";
+        private string rootRoom = "testrooms1";
+
+        private string rootUser = "testusers1";
 
         public List<Room> LoadRoomsByStatus(Status status)
         {
-            return LoadRoomsByStatusVoid(status).Result;
+            return LoadRoomsByStatusAsync(status).Result;
         }
 
-        private async Task<List<Room>> LoadRoomsByStatusVoid(Status status)
+        public async Task<List<Room>> LoadRoomsByStatusAsync(Status status)
         {
             var firebase = new FirebaseClient(fbPath, new FirebaseOptions() { AuthTokenAsyncFactory = () => Task.FromResult(token) });
 
             var rooms = await firebase
-                .Child(root)
+                .Child(rootRoom)
                 .OrderByKey()
                 .OnceAsync<Room>();
 
@@ -38,6 +40,59 @@ namespace LolaRenntFBServer
             }
 
             return result;
+        }
+
+        public User LoadUserById(string userId)
+        {
+            return LoadUserByIdAsync(userId).Result;
+        }
+
+        public async Task<User> LoadUserByIdAsync(string userId)
+        {
+            var firebase = new FirebaseClient(fbPath, new FirebaseOptions() { AuthTokenAsyncFactory = () => Task.FromResult(token) });
+
+            var users = await firebase
+                .Child(rootUser)
+                .OrderByKey()
+                .EqualTo(userId)
+                .OnceAsync<User>();
+
+            foreach (var user in users)
+            {
+                if (user != null)
+                    return user.Object;
+            }
+
+            return null;
+        }
+
+        public void FakeCreateUser(int count)
+        {
+            FakeCreateUserAsync(count).Wait();
+        }
+
+        private async Task FakeCreateUserAsync(int count)
+        {
+            var firebase = new FirebaseClient(fbPath, new FirebaseOptions() { AuthTokenAsyncFactory = () => Task.FromResult(token) });
+
+            var random = new Random();
+
+            for (int i = 0; i < count; i++)
+            {
+                var name = "User-" + Guid.NewGuid().ToString("N");
+                var user = new User()
+                {
+                    Id = name,
+                    Points = (random.Next(10) + 1) * 100,
+                    Name = name
+                };
+
+                await firebase
+                    .Child(rootUser)
+                    .Child(user.Name)
+                    .PutAsync(user);
+            }
+
         }
     }
 }
