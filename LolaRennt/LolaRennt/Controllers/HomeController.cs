@@ -36,7 +36,7 @@ namespace LolaRennt.Controllers
 
         public ActionResult User(string id)
         {
-            return View();
+            return View("User", (object)id);
         }
 
         public ActionResult Room(string roomKey)
