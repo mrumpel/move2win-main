@@ -1,50 +1,99 @@
-﻿@using LolaRenntServer;
-@model Room
-<h2>Ставки</h2>
+﻿@model string
 
 @Html.Partial("FirebaseScripts")
 
-<div id="divRoom">
-    <div class="row">
-        <div class="col-md-4" id="driver1">
-            <div class="row">
-                <h3>Name1</h3>
-                <button type="button" class="btn btn-primary">Bet</button>
-                <table class="table table-striped" style="margin-top:10px">
-                    @if (Model != null && Model.Bets.Any()) {
-                        foreach (var bet in Model.Bets.Where(m => m.Driver == BetDriver.Driver1))
-                        {
-                        <tr>
-                            <td>@bet.UserId</td>
-                            <td>@bet.Amount</td>
-                        </tr>
-                        }
-                    }
-                </table>
+<h2 id="TitleH">Заезд</h2>
+<table style="padding-top:10px;">
+
+    <tr>
+        <td style="width:50%; vertical-align:top;">
+            <div style="text-align:center;">
+                <div><b>Гонщик 1</b></div>
+                <div><h5 id="DriverName1"></h5></div>
+                <div id="Photo1"><img src="https://avt-7.foto.mail.ru/mail/govoradlo1953/_avatar180?"/></div>
             </div>
-        </div>
-        <div class="col-md-4" id="map">
-            <div class="row">
-                <h3>Карта</h3>
-                <p></p>
+        </td>
+        <td>
+            <div id="ActiveRaceMap" style="width: 640px; height: 480px;"></div>
+        </td>
+        <td style="width:50%; vertical-align:top;">
+            <div style="text-align:center;">
+                <div><b>Гонщик 2</b></div>
+                <div><h5 id="DriverName2"></h5></div>
+                <div id="Photo2"><img src="https://avt-7.foto.mail.ru/mail/govoradlo1953/_avatar180?" /></div>
             </div>
-        </div>
-        <div class="col-md-4" id="driver2">
-            <div class="row">
-                <h3>Name2</h3>
-                <button type="button" class="btn btn-primary">Bet</button>
-                <table class="table table-striped" style="margin-top:10px">
-                    @if (Model != null && Model.Bets.Any()) {
-                        foreach (var bet in Model.Bets.Where(m => m.Driver == BetDriver.Driver2))
-                        {
-                        <tr>
-                            <td>@bet.UserId</td>
-                            <td>@bet.Amount</td>
-                        </tr>
-                        }
-                    }
-                    </table>
-            </div>
-        </div>
-    </div>
-</div>
+        </td>
+    </tr>
+
+</table>
+
+
+<script>
+
+    function FindMinMax(item, min, max) {
+        if (min.X == 0 || item.X < min.X) {
+            min.X = item.X;
+        }
+        if (max.X == 0 || item.X > max.X) {
+            max.X = item.X;
+        }
+        if (min.Y == 0 || item.Y < min.Y) {
+            min.Y = item.Y;
+        }
+        if (max.Y == 0 || item.Y > max.Y) {
+            max.Y = item.Y;
+        }
+    }
+
+    function initMap() {
+
+        var roomRef = firebase.database().ref(fbMainRoom + "/@Model");
+
+        roomRef.once("value", function (snapshot) {
+
+            var room = snapshot.val();
+
+            $('#TitleH').html('Заезд ' + room.Name);
+            $('#DriverName1').html(room.Driver1.Name);
+            $('#DriverName2').html(room.Driver1.Name);
+
+            var start = room.Start;
+            var finish = room.Finish;
+
+            var min = { X: 0, Y: 0 };
+            var max = { X: 0, Y: 0 };
+
+            FindMinMax(start, min, max)
+            FindMinMax(finish, min, max);
+
+            var centerX = (max.X + min.X) / 2;
+            var centerY = (max.Y + min.Y) / 2;
+
+            map = new google.maps.Map(document.getElementById('ActiveRaceMap'), {
+                center: { lat: centerX, lng: centerY },
+                zoom: 256
+            });
+
+            map.fitBounds(new google.maps.LatLngBounds(new google.maps.LatLng(min.X, min.Y), new google.maps.LatLng(max.X, max.Y)));
+
+            var pointStart = new google.maps.LatLng(start.X, start.Y);
+            var markerStart = new google.maps.Marker({
+                position: pointStart,
+                label: "S"
+            });
+            markerStart.setMap(map);
+
+            var pointFinish = new google.maps.LatLng(finish.X, finish.Y);
+            var markerFinish = new google.maps.Marker({
+                position: pointFinish,
+                label: "F"
+            });
+            markerFinish.setMap(map);
+
+            google.maps.event.trigger(map, 'resize');
+        });
+      
+    }
+</script>
+
+<script src="https://maps.googleapis.com/maps/api/js?key=AIzaSyCyB8vHmUniK44AyaY0Gmvq3IH238J64G8&callback=initMap" async defer></script>
