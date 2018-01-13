@@ -2,7 +2,7 @@
 
 @Html.Partial("FirebaseScripts")
 
-<h2>Завершенный заезд</h2>
+<h2 id ="TitleH">Завершенный заезд</h2>
 
 <div id="FinishedRaceMap" style="width: 640px; height: 480px;"></div>
 
@@ -13,39 +13,51 @@
         this.push({ lat: item.Point.X, lng: item.Point.Y });
     }
 
+    function FindMinMax(trackCoordinates, min, max)
+    {
+        trackCoordinates.forEach(function (item, i, arr) {
+            if (min.X == 0 || item.lat < min.X) {
+                min.X = item.lat;
+            }
+            if (max.X == 0 || item.lat > max.X) {
+                max.X = item.lat;
+            }
+            if (min.Y == 0 || item.lng < min.Y) {
+                min.Y = item.lng;
+            }
+            if (max.Y == 0 || item.lng > max.Y) {
+                max.Y = item.lng;
+            }
+        });
+    }
+
     function initMap() {
 
-
-
-        var rootRef = firebase.database().ref();
-        //var roomRef = rootRef.child("testrooms1").limitToFirst(1);
-        var roomRef = firebase.database().ref("@Model");
+        var roomRef = firebase.database().ref(fbMainRoom + "/@Model");
 
         roomRef.once("value", function (snapshot) {
-            //snapshot.forEach(function (child) {
-            //console.log(child.key);
-            //var room = child.val();
-            var room = snapshot.val();
 
-            debugger;
+            var room = snapshot.val();
 
             var track1 = room.Driver1.Track;
             var track2 = room.Driver2.Track;
 
+            $('#TitleH').html('Завершенный заезд ' + room.Name);
+
             var track1Coordinates = [];
             var track2Coordinates = [];
 
-            for (index = 0; index < a.length; ++index) {
-                console.log(a[index]);
-            }
+            var min = { X: 0, Y: 0 };
+            var max = { X: 0, Y: 0 };
 
-            track1.forEach(function (item, i, arr) {
-                track1Coordinates.push({ lat: item.Point.X, lng: item.Point.Y });
-            }, track1Coordinates);
+            track1.forEach(ReadTrack, track1Coordinates);
+            track2.forEach(ReadTrack, track2Coordinates);
 
-            track2.forEach(function (item, i, arr) {
-                track2Coordinates.push({ lat: item.Point.X, lng: item.Point.Y });
-            });
+            FindMinMax(track1Coordinates, min, max);
+            FindMinMax(track2Coordinates, min, max);
+            
+            var centerX = (max.X + min.X) / 2;
+            var centerY = (max.Y + min.Y) / 2;
 
             var path1 = new google.maps.Polyline({
                 path: track1Coordinates,
@@ -63,9 +75,12 @@
                 strokeWeight: 4
             });
 
-            map = new google.maps.Map(document.getElementById('map'), { });
+            map = new google.maps.Map(document.getElementById('FinishedRaceMap'), {
+                center: { lat: centerX, lng: centerY },
+                zoom: 256
+            });
 
-            map.fitBounds(new google.maps.LatLngBounds(new google.maps.LatLng(57, 57), new google.maps.LatLng(56, 57)));
+            map.fitBounds(new google.maps.LatLngBounds(new google.maps.LatLng(min.X, min.Y), new google.maps.LatLng(max.X, max.Y)));
 
             path1.setMap(map);
             path2.setMap(map);
@@ -90,7 +105,5 @@
         //});
     }
 </script>
-
-
 
 <script src="https://maps.googleapis.com/maps/api/js?key=AIzaSyCyB8vHmUniK44AyaY0Gmvq3IH238J64G8&callback=initMap" async defer></script>

@@ -7,7 +7,7 @@
     $(document).ready(function () {
 
         var rootRef = firebase.database().ref();
-        var roomRef = rootRef.child("testrooms1");
+        var roomRef = rootRef.child(fbMainRoom).orderByChild("Status").equalTo(5);
 
         roomRef.once("value", function (snapshot) {
             snapshot.forEach(function (child) {
