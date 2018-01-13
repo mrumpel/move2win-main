@@ -42,6 +42,9 @@
             var track1 = room.Driver1.Track;
             var track2 = room.Driver2.Track;
 
+            var start = room.Start;
+            var finish = room.Finish;
+
             $('#TitleH').html('Завершенный заезд ' + room.Name);
 
             var track1Coordinates = [];
@@ -85,14 +88,14 @@
             path1.setMap(map);
             path2.setMap(map);
 
-            var pointStart = new google.maps.LatLng(track1[0].Point.X, track1[0].Point.Y);
+            var pointStart = new google.maps.LatLng(start.X, start.Y);
             var markerStart = new google.maps.Marker({
                 position: pointStart,
                 label: "S"
             });
             markerStart.setMap(map);
 
-            var pointFinish = new google.maps.LatLng(track1[track1.length - 1].Point.X, track1[track1.length - 1].Point.Y);
+            var pointFinish = new google.maps.LatLng(finish.X, finish.Y);
             var markerFinish = new google.maps.Marker({
                 position: pointFinish,
                 label: "F"

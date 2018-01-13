@@ -36,13 +36,7 @@ namespace LolaRennt.Controllers
 
         public ActionResult Room(string roomKey)
         {
-            var room = new Room()
-            {
-                Bets = new BetItem[]
-                {
-                }
-            };
-            return View(room);
+            return View("Room", (object)roomKey);
         }
 
         public ActionResult Bet(string roomKey)
