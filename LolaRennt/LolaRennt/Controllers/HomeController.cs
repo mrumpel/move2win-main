@@ -9,7 +9,7 @@ namespace LolaRennt.Controllers
     {
         public ActionResult Index()
         {
-            return View();
+            return RoomList();
         }
 
         public ActionResult FinishedRaces()
@@ -31,9 +31,7 @@ namespace LolaRennt.Controllers
 
         public ActionResult RoomList()
         {
-            FBService service = new FBService();
-            List<Room> rooms = service.LoadRoomsByStatus(Status.Full);
-            return View(rooms);
+            return View();
         }
 
         public ActionResult Room(string roomKey)
