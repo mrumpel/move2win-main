@@ -34,7 +34,7 @@
                     <table>
                         <tr>
                             <td>
-                                <p id="pName"></p>
+                                <div id="pName"></div>
                             </td>
                             <td>
                                 <input type="submit" value="Донат" onClick="AddPoints();">
@@ -93,7 +93,7 @@
                 snapshot.forEach(function (child) {
                     lnght = lnght + 1;
                 });
-                
+
                 try {
                     lnght = getRandomInt(0, lnght);
                 }
@@ -109,20 +109,27 @@
                         setCookie("LolaRenntName", user.Name);
 
                         setName();
-                        window.location.reload(false); 
+                        window.location.reload(false);
 
                     }
                     i = i + 1;
                 });
 
-                
+
 
             });
         }
 
         function setName()
         {
-            $('#pName').html('<a href="@Url.Action("User", "Home")?id=' + getCookie('LolaRenntKey') + '" id="Name">' + getCookie('LolaRenntName') + '</a>');
+            var userRef = firebase.database().ref(fbMainUser + "/" + getCookie('LolaRenntKey'));
+            
+            userRef.once("value", function (snapshot) {
+                var user = snapshot.val();
+                $('#pName').append('<p style="display: inline; color: white">(' + user.Points + ')</p>');
+            });
+            $('#pName').html('<a href="@Url.Action("User", "Home")?id=' + getCookie('LolaRenntKey') + '" id="Name">'
+                + getCookie('LolaRenntName') + '</a>');
         }
 
         function AuthUser(user) {
@@ -153,6 +160,13 @@
             else {
                 setName();
             }
+            var userRef = firebase.database().ref(fbMainUser + "/" + getCookie('LolaRenntKey'));
+            userRef.on('value', function (snapshot) {
+                userRef.once("value", function (snapshot) {
+                    var user = snapshot.val();
+                    $('#pName').children('p').html('<p style="display: inline; color: white">(' + user.Points + ')</p>');
+                });
+            });
         });
 
     </script>
