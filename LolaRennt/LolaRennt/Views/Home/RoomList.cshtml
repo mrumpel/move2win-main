@@ -1,0 +1,38 @@
+﻿@using LolaRenntServer;
+@model List<Room>
+<h2>Ставки</h2>
+
+<div id="divBets">
+    <div class="row">
+        <div class="col-md-8">
+            <div class="row">
+                <table class="table table-striped" style="margin-top:10px">
+                    @if (Model != null && Model.Any()) {
+                        foreach (var room in Model)
+                        {
+                        <tr>
+                            <td>
+                                <div class="row">
+                                    <div class="col-md-4">
+                                        @room.Name
+                                    </div>
+                                    <div class="col-md-4">
+                                        @room.Driver1.Name
+                                    </div>
+                                    <div class="col-md-4">
+                                        @room.Driver2.Name
+                                    </div>
+                                </div>
+                            </td>
+                        </tr>
+                        }
+                    }
+                </table>
+            </div>
+        </div>
+        <div class="col-md-4" id="map">
+            <div class="row">
+            </div>
+        </div>
+    </div>
+</div>

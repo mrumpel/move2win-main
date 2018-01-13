@@ -1,4 +1,5 @@
-﻿using LolaRenntServer;
+﻿using LolaRenntFBServer;
+using LolaRenntServer;
 using System.Collections.Generic;
 using System.Web.Mvc;
 
@@ -28,9 +29,22 @@ namespace LolaRennt.Controllers
             return View();
         }
 
+        public ActionResult RoomList()
+        {
+            FBService service = new FBService();
+            List<Room> rooms = service.LoadRoomsByStatus(Status.Full);
+            return View(rooms);
+        }
+
         public ActionResult Room(string roomKey)
         {
-            return View();
+            var room = new Room()
+            {
+                Bets = new BetItem[]
+                {
+                }
+            };
+            return View(room);
         }
 
         public ActionResult Bet(string roomKey)
