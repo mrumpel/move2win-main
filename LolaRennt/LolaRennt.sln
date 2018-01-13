@@ -7,6 +7,8 @@ Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "LolaRennt", "LolaRennt\Lola
 EndProject
 Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "LolaRenntModels", "LolaRenntServer\LolaRenntModels.csproj", "{E14835DE-BE85-44CE-9BFF-EBD5D5D1417E}"
 EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "LolaRenntFBServer", "LolaRenntFBServer\LolaRenntFBServer.csproj", "{69165C96-8F12-4D98-A4BE-7355C3B382D4}"
+EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
 		Debug|Any CPU = Debug|Any CPU
@@ -21,6 +23,10 @@ Global
 		{E14835DE-BE85-44CE-9BFF-EBD5D5D1417E}.Debug|Any CPU.Build.0 = Debug|Any CPU
 		{E14835DE-BE85-44CE-9BFF-EBD5D5D1417E}.Release|Any CPU.ActiveCfg = Release|Any CPU
 		{E14835DE-BE85-44CE-9BFF-EBD5D5D1417E}.Release|Any CPU.Build.0 = Release|Any CPU
+		{69165C96-8F12-4D98-A4BE-7355C3B382D4}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{69165C96-8F12-4D98-A4BE-7355C3B382D4}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{69165C96-8F12-4D98-A4BE-7355C3B382D4}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{69165C96-8F12-4D98-A4BE-7355C3B382D4}.Release|Any CPU.Build.0 = Release|Any CPU
 	EndGlobalSection
 	GlobalSection(SolutionProperties) = preSolution
 		HideSolutionNode = FALSE

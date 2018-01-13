@@ -1,4 +1,6 @@
-﻿using System.Web.Mvc;
+﻿using LolaRenntServer;
+using System.Collections.Generic;
+using System.Web.Mvc;
 
 namespace LolaRennt.Controllers
 {
@@ -23,6 +25,16 @@ namespace LolaRennt.Controllers
         {
             ViewBag.Message = "Your contact page.";
 
+            return View();
+        }
+
+        public ActionResult Room(string roomKey)
+        {
+            return View();
+        }
+
+        public ActionResult Bet(string roomKey)
+        {
             return View();
         }
     }
