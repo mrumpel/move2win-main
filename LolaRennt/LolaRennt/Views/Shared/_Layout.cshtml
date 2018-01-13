@@ -12,6 +12,8 @@
     @RenderSection("scripts", required: false)
 </head>
 <body>
+    @Html.Partial("FirebaseScripts")
+
     <div class="navbar navbar-inverse navbar-fixed-top">
         <div class="container">
             <div class="navbar-header">
@@ -27,7 +29,23 @@
                     <li>@Html.ActionLink("Активные заезды", "RoomList", "Home")</li>
                     <li>@Html.ActionLink("Завершенные заезды", "FinishedRaces", "Home")</li>
                 </ul>
+
+                <div style="position: absolute; right: 15px; top: 15px; ">
+                    <table>
+                        <tr>
+                            <td>
+                                <p id="pName"></p>
+                            </td>
+                            <td>
+                                <input type="submit" value="Войти" onClick="AuthRandomUser();">
+                            </td>
+                        </tr>
+                    </table>
+                </div>
             </div>
+            
+            
+
         </div>
     </div>
     <div class="container body-content">
@@ -37,6 +55,84 @@
             <p>&copy; @DateTime.Now.Year</p>
         </footer>
     </div>
+
+    <script type="text/javascript">
+
+        function getRandomInt(min, max) {
+            return Math.floor(Math.random() * (max - min)) + min;
+        }
+
+        function AuthRandomUser()
+        {
+            var rootRef = firebase.database().ref();
+            var userRef = rootRef.child(fbMainUser);
+
+            userRef.once("value", function (snapshot) {
+                var lnght = 0;
+                snapshot.forEach(function (child) {
+                    lnght = lnght + 1;
+                });
+                
+                try {
+                    lnght = getRandomInt(0, lnght);
+                }
+                catch (e) {
+                    lnght = 0;
+                }
+
+                var i = 0;
+                snapshot.forEach(function (child) {
+                    if (i == lnght) {
+                        var user = child.val();
+                        setCookie("LolaRenntKey", child.Key);
+                        setCookie("LolaRenntName", user.Name);
+
+                        setName();
+                    }
+                    i = i + 1;
+                });
+
+                
+
+            });
+        }
+
+        function setName()
+        {
+            $('#pName').html(getCookie('LolaRenntName'));
+        }
+
+        function AuthUser(user) {
+            setCookie("LolaRenntKey", user);
+            setCookie("LolaRenntName", user);
+
+            setName();
+        }
+
+        function setCookie(name, value) {
+            document.cookie = name + "=" + value;
+        }
+        function getCookie(name) {
+            var r = document.cookie.match("(^|;) ?" + name + "=([^;]*)(;|$)");
+            if (r) return r[2];
+            else return "";
+        }
+        function deleteCookie(name) {
+            var date = new Date(); // Берём текущую дату
+            date.setTime(date.getTime() - 1); // Возвращаемся в "прошлое"
+            document.cookie = name += "=; expires=" + date.toGMTString(); // Устанавливаем cookie пустое значение и срок действия до прошедшего уже времени
+        }
+
+        $(document).ready(function () {
+            if (getCookie('LolaRenntKey') == "") {
+                AuthRandomUser();
+            }
+            else {
+                setName();
+            }
+        });
+
+    </script>
 
 </body>
 </html>
