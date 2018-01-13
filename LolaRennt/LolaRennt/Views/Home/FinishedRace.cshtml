@@ -1,0 +1,96 @@
+﻿@model string
+
+@Html.Partial("FirebaseScripts")
+
+<h2>Завершенный заезд</h2>
+
+<div id="FinishedRaceMap" style="width: 640px; height: 480px;"></div>
+
+<script>
+    var finishedRaceMap;
+
+    function ReadTrack(item, i, arr) {
+        this.push({ lat: item.Point.X, lng: item.Point.Y });
+    }
+
+    function initMap() {
+
+
+
+        var rootRef = firebase.database().ref();
+        //var roomRef = rootRef.child("testrooms1").limitToFirst(1);
+        var roomRef = firebase.database().ref("@Model");
+
+        roomRef.once("value", function (snapshot) {
+            //snapshot.forEach(function (child) {
+            //console.log(child.key);
+            //var room = child.val();
+            var room = snapshot.val();
+
+            debugger;
+
+            var track1 = room.Driver1.Track;
+            var track2 = room.Driver2.Track;
+
+            var track1Coordinates = [];
+            var track2Coordinates = [];
+
+            for (index = 0; index < a.length; ++index) {
+                console.log(a[index]);
+            }
+
+            track1.forEach(function (item, i, arr) {
+                track1Coordinates.push({ lat: item.Point.X, lng: item.Point.Y });
+            }, track1Coordinates);
+
+            track2.forEach(function (item, i, arr) {
+                track2Coordinates.push({ lat: item.Point.X, lng: item.Point.Y });
+            });
+
+            var path1 = new google.maps.Polyline({
+                path: track1Coordinates,
+                geodesic: true,
+                strokeColor: '#FF0000',
+                strokeOpacity: 0.5,
+                strokeWeight: 4
+            });
+
+            var path2 = new google.maps.Polyline({
+                path: track2Coordinates,
+                geodesic: true,
+                strokeColor: '#0000FF',
+                strokeOpacity: 0.5,
+                strokeWeight: 4
+            });
+
+            map = new google.maps.Map(document.getElementById('map'), { });
+
+            map.fitBounds(new google.maps.LatLngBounds(new google.maps.LatLng(57, 57), new google.maps.LatLng(56, 57)));
+
+            path1.setMap(map);
+            path2.setMap(map);
+
+            var pointStart = new google.maps.LatLng(track1[0].Point.X, track1[0].Point.Y);
+            var markerStart = new google.maps.Marker({
+                position: pointStart,
+                label: "S"
+            });
+            markerStart.setMap(map);
+
+            var pointFinish = new google.maps.LatLng(track1[track1.length - 1].Point.X, track1[track1.length - 1].Point.Y);
+            var markerFinish = new google.maps.Marker({
+                position: pointFinish,
+                label: "F"
+            });
+            markerFinish.setMap(map);
+
+            google.maps.event.trigger(map, 'resize');
+
+        });
+        //});
+    }
+</script>
+
+
+
+<script src="https://maps.googleapis.com/maps/api/js?key=AIzaSyCyB8vHmUniK44AyaY0Gmvq3IH238J64G8&callback=initMap" async defer></script>

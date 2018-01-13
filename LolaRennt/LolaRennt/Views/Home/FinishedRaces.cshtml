@@ -1,0 +1,33 @@
+﻿<h2>Завершенные заезды</h2>
+
+@Html.Partial("FirebaseScripts")
+
+<script type="text/javascript">
+
+    $(document).ready(function () {
+
+        var rootRef = firebase.database().ref();
+        var roomRef = rootRef.child("testrooms1");
+
+        roomRef.once("value", function (snapshot) {
+            snapshot.forEach(function (child) {
+                var room = child.val();
+
+                var roomKey = child.key;
+                var roomName = room.Name;
+
+                $('#tableFinishedRaces tr:last').after('<tr><td><a href="@Url.Action("FinishedRace", "Home")?roomKey=' + roomKey + '">' + roomName + '</a></tr></t>');
+            });
+        });
+
+    });
+
+</script>
+
+<div id="divFinishedRaces">
+    <table id="tableFinishedRaces">
+        <tr>
+            <td><h5>Комната</h5></td>
+        </tr>
+    </table>
+</div>
