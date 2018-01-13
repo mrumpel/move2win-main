@@ -126,7 +126,7 @@
             
             userRef.once("value", function (snapshot) {
                 var user = snapshot.val();
-                $('#pName').append('<p style="display: inline; color: white">(' + user.Points + ')</p>');
+                $('#pName').append('<p style="display: inline; color: white"> (' + user.Points + ')</p>');
             });
             $('#pName').html('<a href="@Url.Action("User", "Home")?id=' + getCookie('LolaRenntKey') + '" id="Name">'
                 + getCookie('LolaRenntName') + '</a>');
@@ -164,7 +164,7 @@
             userRef.on('value', function (snapshot) {
                 userRef.once("value", function (snapshot) {
                     var user = snapshot.val();
-                    $('#pName').children('p').html('<p style="display: inline; color: white">(' + user.Points + ')</p>');
+                    $('#pName').children('p').text(' ('+user.Points+')');
                 });
             });
         });
